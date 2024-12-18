@@ -19,38 +19,40 @@ class SimulationSeeder extends Seeder
      */
     public function run()
     {
-        $faculty = Faculty::where(['code' => '02'])->first();
-        $sp = StudyProgram::insert(
-            [
-                'name' => 'Pendidikan Teknik Informatika dan Komputer',
-                'address' => '-',
-                'faculty_id' => $faculty->id,
-            ]
-        );
-        $lecturer = Lecturer::insert(
-            [
-                'front_title' => null,
-                'full_name' => 'Yusfia Hafid Aristyagama',
-                'back_title' => 'S.T., M.T.',
-                'email' => 'yusfia.hafid@staff.uns.ac.id',
-                'scholar_id' => 'gUqsw8AAAAAJ',
-                'scopus_id' => null,
-                'study_program_id' => 1,
-            ]
-        );
+        // Pastikan Faculty dengan code '02' ada
+        $faculty = Faculty::where('code', '02')->firstOrFail();
 
-        $role_sysadmin = Role::create(['name' => RolesEnum::SYS_ADMIN]);
-        $role_study_program_admin = Role::create(['name' => RolesEnum::STUDY_PROGRAM_ADMIN]);
-        $role_faculty_admin = Role::create(['name' => RolesEnum::FACULTY_ADMIN]);
-        $role_lecturer = Role::create(['name' => RolesEnum::LECTURER]);
-        $role_guest = Role::create(['name' => RolesEnum::GUEST]);
+        // Buat Study Program
+        $studyProgram = StudyProgram::create([
+            'name' => 'Pendidikan Teknik Informatika dan Komputer',
+            'address' => '-',
+            'faculty_id' => $faculty->id,
+        ]);
 
-        $user =  User::create([
+        // Buat User
+        $user = User::create([
             'name' => 'Yusfia H',
             'email' => 'yusfia.hafid@staff.uns.ac.id',
             'password' => bcrypt('123456'),
-            'study_program_id' => 1,
         ]);
+
+        // Assign Role ke User
+        $role_study_program_admin = Role::firstOrCreate(['name' => RolesEnum::STUDY_PROGRAM_ADMIN]);
         $user->assignRole([$role_study_program_admin->id]);
+
+        // Tambahkan Lecturer
+        Lecturer::create([
+            'user_id' => $user->id,
+            'front_title' => null,
+            'back_title' => 'S.T., M.T.',
+            'scopus_id' => null,
+            'scholar_id' => 'gUqsw8AAAAAJ',
+        ]);
+
+        // Tambahkan Roles Lainnya
+        Role::firstOrCreate(['name' => RolesEnum::SYS_ADMIN]);
+        Role::firstOrCreate(['name' => RolesEnum::FACULTY_ADMIN]);
+        Role::firstOrCreate(['name' => RolesEnum::LECTURER]);
+        Role::firstOrCreate(['name' => RolesEnum::GUEST]);
     }
 }
