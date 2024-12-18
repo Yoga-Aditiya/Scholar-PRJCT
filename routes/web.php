@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Scraper;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,8 @@ Auth::routes(['register' => false]);
 Route::get('/', function () {
     return redirect()->route('front-page');
 });
+
+Route::get('/scrap', [Scraper::class, 'index'])->name('scrape');
 
 Route::get('/home', [\App\Http\Controllers\FontPageController::class, 'index'])->name('front-page');
 Route::prefix('admin')->name('admin.')->group(function () {
