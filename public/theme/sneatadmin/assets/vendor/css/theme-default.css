@@ -8,6 +8,47 @@
   z-index: 10;
 }
 
+/* Light Mode */
+html[data-theme="light"] {
+  --background-color: #f4f5f7;
+  --text-color: #212529;
+  --menu-background-color: #ffffff;
+  --menu-text-color: #495057;
+  --menu-hover-background: #e9ecef;
+  --menu-hover-text-color: #212529;
+}
+
+/* Dark Mode */
+html[data-theme="dark"] {
+  --background-color: #181a1b;
+  --text-color: #f8f9fa;
+  --menu-background-color: #242526;
+  --menu-text-color: #adb5bd;
+  --menu-hover-background: #343a40;
+  --menu-hover-text-color: #ffffff;
+}
+
+/* Apply Variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.layout-menu {
+  background-color: var(--menu-background-color);
+}
+
+.menu-link {
+  color: var(--menu-text-color);
+}
+
+.menu-link:hover {
+  background-color: var(--menu-hover-background);
+  color: var(--menu-hover-text-color);
+}
+
+
 .bg-menu-theme .menu-header {
   position: relative;
 }

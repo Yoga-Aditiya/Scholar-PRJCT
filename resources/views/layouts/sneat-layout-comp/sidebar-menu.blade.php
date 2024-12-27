@@ -1,3 +1,110 @@
+<head>
+    <style>
+        /* styles.css */
+        body.dark-mode {
+            background-color: #2c2c2c; /* Warna latar belakang lebih gelap */
+            color: #e1e1e1; /* Warna teks terang */
+        }
+
+        body.dark-mode .menu {
+            background-color: #333; /* Warna sidebar gelap */
+        }
+
+        body.dark-mode .menu-link {
+            color: #e1e1e1; /* Warna teks menu terang */
+        }
+
+        body.dark-mode .menu-item.active > .menu-link {
+            background-color: #6a4c9c; /* Warna ungu untuk item yang aktif */
+            color: #ffffff;
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Styling untuk tombol light/dark mode */
+        .mode-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .mode-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider .icon {
+            position: absolute;
+            font-size: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .slider .icon.sun {
+            left: 6px;
+            font-size: 18px;
+        }
+
+        .slider .icon.moon {
+            right: 6px;
+            font-size: 18px;
+        }
+
+        .slider .icon.sun.hidden,
+        .slider .icon.moon.hidden {
+            display: none;
+        }
+
+        /* Styling untuk sidebar */
+        .menu-inner {
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-item.active > .menu-link {
+            background-color: #6a4c9c; /* Warna ungu ketika item aktif */
+            color: white;
+        }
+    </style>
+</head>
+
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="index.html" class="app-brand-link">
@@ -50,7 +157,7 @@
                   </g>
                 </svg>
               </span>
-            <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span>
+            <span class="app-brand-text demo menu-text fw-bold ms-2">Si Tasi</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -60,6 +167,17 @@
 
     <div class="menu-inner-shadow"></div>
 
+    <!-- Light/Dark Mode Toggle -->
+    <div class="mode-toggle text-center py-2">
+        <label class="switch">
+            <input type="checkbox" id="mode-toggle-btn">
+            <span class="slider">
+                <span class="icon sun">☀️</span>  <!-- Ikon matahari -->
+                <span class="icon moon hidden">🌙</span> <!-- Ikon bulan -->
+            </span>
+        </label>
+    </div>
+
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Dashboard Panel</span></li>
@@ -67,6 +185,21 @@
             <a href="{{route('admin.dashboard')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Dashboards">Dashboards</div>
+            </a>
+        </li>
+
+          <!-- Additional Features -->
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Features</span></li>
+        <li class="menu-item">
+            <a href="{{ route('admin.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-book"></i>
+                <div>Citations</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ route('admin.dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-bar-chart"></i>
+                <div>Statistics</div>
             </a>
         </li>
 
@@ -125,3 +258,52 @@
         @endhasanyrole
     </ul>
 </aside>
+
+<script>
+    // script.js
+    const modeToggleBtn = document.getElementById('mode-toggle-btn');
+    const sunIcon = document.querySelector('.slider .icon.sun');
+    const moonIcon = document.querySelector('.slider .icon.moon');
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    // Fungsi untuk mengatur mode berdasarkan preferensi
+    const setMode = (isDarkMode) => {
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove('dark-mode');
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+            localStorage.setItem('theme', 'light');
+        }
+    };
+
+    // Event Listener untuk tombol toggle
+    modeToggleBtn.addEventListener('change', () => {
+        const isDarkMode = modeToggleBtn.checked;
+        setMode(isDarkMode);
+    });
+
+    // Muat preferensi tema saat halaman dimuat
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        modeToggleBtn.checked = true;
+        setMode(true);
+    } else {
+        modeToggleBtn.checked = false;
+        setMode(false);
+    }
+
+    // Untuk memastikan ketika menu item di klik, item yang aktif berubah menjadi warna ungu
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Menghapus class active dari semua menu item
+            menuItems.forEach(i => i.classList.remove('active'));
+            // Menambahkan class active pada item yang dipilih
+            item.classList.add('active');
+        });
+    });
+</script>
